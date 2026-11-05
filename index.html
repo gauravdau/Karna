@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE CANINE HELP — Animal Rescue & Adoption Platform</title>
+<meta name="description" content="The Canine Help — Rescue, rehabilitate and rehome street & abandoned dogs. Adopt, volunteer, donate or report a rescue.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --text:#14171d; --muted:#6b7280; --line:#e6e8ee;
+  --brand:#ef6c2e; --brand2:#f9a03f; --soft:#fff2e8; --soft2:#eef4ff;
+  --ok:#16a34a; --warn:#e0a008; --bad:#dc2626;
+  --radius:16px; --shadow:0 6px 24px rgba(16,24,40,.08);
+}
+[data-theme="dark"]{
+  --bg:#0d0f14; --card:#161a22; --text:#eef1f6; --muted:#98a1b3; --line:#252b37;
+  --soft:#2b1d13; --soft2:#182234; --shadow:0 6px 26px rgba(0,0,0,.55);
+}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;
+  padding-top:0;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 18px}
+.muted{color:var(--muted)}
+.small{font-size:.85rem}
+.center{text-align:center}
+
+/* scroll progress */
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--brand),var(--brand2));
+  z-index:120;width:0%;transition:width .1s linear}
+
+/* ---------- NAV ---------- */
+.nav{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--card) 88%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:16px;position:relative}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:1.35rem;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 6px 16px rgba(239,108,46,.35)}
+.brand-txt b{display:block;font-size:.92rem;letter-spacing:.06em;line-height:1.1}
+.brand-txt small{font-size:.66rem;color:var(--muted);letter-spacing:.09em;text-transform:uppercase}
+.links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.links a{padding:8px 12px;border-radius:10px;font-size:.9rem;font-weight:500;color:var(--muted);transition:.18s}
+.links a:hover,.links a.active{background:var(--soft);color:var(--brand)}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.links + .nav-actions{margin-left:0}
+.icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:var(--card);
+  cursor:pointer;display:grid;place-items:center;font-size:1rem;transition:.18s}
+.icon-btn:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px)}
+.hamburger{display:none}
+.userchip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);cursor:pointer;transition:.18s}
+.userchip:hover{border-color:var(--brand)}
+.avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+.uname{font-size:.86rem;font-weight:600}
+#authArea{position:relative;display:flex;gap:8px;align-items:center}
+.dropdown{position:absolute;top:calc(100% + 10px);right:0;min-width:220px;background:var(--card);
+  border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;display:none;z-index:80}
+.dropdown.open{display:block;animation:pop .18s ease}
+.dropdown a,.dropdown button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:10px 12px;
+  border-radius:9px;background:none;border:0;cursor:pointer;font-size:.9rem;font-weight:500;transition:.15s}
+.dropdown a:hover,.dropdown button:hover{background:var(--soft);color:var(--brand)}
+
+/* ---------- BUTTONS ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 20px;border-radius:12px;
+  border:1px solid transparent;font-weight:600;font-size:.92rem;cursor:pointer;transition:.18s;white-space:nowrap}
+.btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;
+  box-shadow:0 8px 20px rgba(239,108,46,.3)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(239,108,46,.4)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--text)}
+.btn.ghost:hover{border-color:var(--brand);color:var(--brand)}
+.btn.soft{background:var(--soft);color:var(--brand)}
+.btn.soft:hover{background:var(--brand);color:#fff}
+.btn.danger{background:var(--bad);color:#fff}
+.btn.danger:hover{background:#b91c1c;transform:translateY(-1px)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.ok:hover{background:#15803d;transform:translateY(-1px)}
+.btn.sm{padding:8px 14px;font-size:.82rem;border-radius:10px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;overflow:hidden;padding:70px 0 80px;background:
+  radial-gradient(1000px 500px at 85% -10%,rgba(249,160,63,.28),transparent 60%),
+  radial-gradient(800px 500px at 5% 110%,rgba(239,108,46,.20),transparent 60%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:
+  radial-gradient(circle,var(--brand) 1px,transparent 1px);background-size:38px 38px;opacity:.04;pointer-events:none}
+.hero::after{content:"🐾";position:absolute;right:4%;top:12%;font-size:9rem;opacity:.06;transform:rotate(-16deg);animation:float 8s ease-in-out infinite}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;position:relative;z-index:1}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:999px;background:var(--soft);
+  color:var(--brand);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px;
+  animation:pop .5s ease}
+h1{font-size:clamp(2.1rem,4.4vw,3.5rem);line-height:1.08;letter-spacing:-.02em;margin-bottom:18px;font-weight:800}
+h1 .hl{background:linear-gradient(135deg,var(--brand),var(--brand2));-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+.hero p.lead{font-size:1.06rem;color:var(--muted);max-width:56ch;margin-bottom:26px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.hero-art{position:relative;display:grid;place-items:center}
+.hero-art .blob{width:100%;aspect-ratio:1;border-radius:38% 62% 55% 45%/45% 40% 60% 55%;
+  background:linear-gradient(135deg,rgba(239,108,46,.9),rgba(249,160,63,.85));
+  display:grid;place-items:center;font-size:9rem;box-shadow:0 30px 70px rgba(239,108,46,.35);
+  animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes pop{from{transform:translateY(10px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:44px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;
+  box-shadow:var(--shadow);transition:.22s}
+.stat:hover{transform:translateY(-3px)}
+.stat b{display:block;font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,var(--brand),var(--brand2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.stat span{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+
+/* ---------- SECTIONS ---------- */
+section.block{padding:64px 0}
+.sec-head{text-align:center;max-width:640px;margin:0 auto 40px}
+.sec-head h2{font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.02em;margin-bottom:10px}
+.sec-head p{color:var(--muted)}
+.grid{display:grid;gap:22px}
+.g3{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.g4{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.revealed{opacity:1;transform:none}
+
+/* ---------- DOG CARD ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow);transition:.22s}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(16,24,40,.14)}
+.dog-card .dog-photo{position:relative;height:200px;background-size:cover;background-position:center;
+  transition:transform .3s}
+.badge{position:absolute;top:12px;left:12px;padding:5px 11px;border-radius:999px;font-size:.7rem;
+  font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:#fff;color:#111}
+.badge.available{background:#dcfce7;color:#166534}
+.badge.pending{background:#fef3c7;color:#92400e}
+.badge.adopted{background:#e0e7ff;color:#3730a3}
+.fav{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:0;
+  background:rgba(255,255,255,.92);cursor:pointer;font-size:1rem;display:grid;place-items:center;transition:.18s}
+.fav:hover{transform:scale(1.15)}
+.fav.on{background:#ffe4e6}
+.dog-body{padding:16px}
+.dog-body h3{font-size:1.08rem;margin-bottom:4px}
+.dog-body .meta{font-size:.83rem;color:var(--muted)}
+.dog-body .loc{font-size:.83rem;color:var(--muted);margin:6px 0 10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--soft2);color:#3b5bdb;
+  letter-spacing:.03em}
+.chip.ok{background:#dcfce7;color:#166534}
+.chip.warn{background:#fef3c7;color:#92400e}
+.chip.bad{background:#fee2e2;color:#991b1b}
+
+/* ---------- FILTERS ---------- */
+.filters{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+  box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:26px}
+label.fld{display:flex;flex-direction:column;gap:6px;font-size:.78rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em}
+input,select,textarea{padding:10px 13px;border:1px solid var(--line);border-radius:11px;background:var(--bg);
+  outline:none;transition:.16s;font-size:.92rem;width:100%;color:var(--text)}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(239,108,46,.14)}
+textarea{resize:vertical;min-height:90px}
+.pwd-wrap{position:relative}
+.pwd-wrap input{padding-right:42px}
+.pwd-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;
+  cursor:pointer;font-size:1.05rem;padding:6px;border-radius:8px}
+.pwd-toggle:hover{background:var(--soft)}
+
+/* ---------- HOW / STEPS ---------- */
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;transition:.22s}
+.step:hover{transform:translateY(-3px)}
+.step .num{position:absolute;right:14px;top:6px;font-size:3.4rem;font-weight:900;color:var(--brand);opacity:.09}
+.step .ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;
+  background:var(--soft);margin-bottom:14px}
+.step h4{margin-bottom:6px;font-size:1.02rem}
+.step p{font-size:.88rem;color:var(--muted)}
+
+/* ---------- FAQ ---------- */
+.faq{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;
+  overflow:hidden;transition:.18s}
+.faq[open]{border-color:var(--brand)}
+.faq summary{padding:16px 20px;cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:1.4rem;color:var(--brand);transition:transform .2s}
+.faq[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 20px 16px;color:var(--muted);font-size:.92rem}
+
+/* ---------- PANELS/FORMS ---------- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+.form{display:grid;gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form label{display:flex;flex-direction:column;gap:6px;font-size:.82rem;font-weight:700;color:var(--muted)}
+.form label.full,.form .full{grid-column:1/-1}
+
+/* ---------- TABS ---------- */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:12px}
+.tabs button{padding:9px 16px;border-radius:10px;border:1px solid transparent;background:transparent;
+  cursor:pointer;font-weight:600;font-size:.88rem;color:var(--muted);transition:.18s}
+.tabs button:hover{background:var(--soft);color:var(--brand)}
+.tabs button.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+
+/* ---------- TABLE ---------- */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:.87rem;background:var(--card)}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--soft);font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:color-mix(in srgb,var(--soft) 50%,transparent)}
+.tag{font-size:.7rem;font-weight:800;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+.tag.pending{background:#fef3c7;color:#92400e}
+.tag.approved{background:#dcfce7;color:#166534}
+.tag.rejected{background:#fee2e2;color:#991b1b}
+.tag.open{background:#dbeafe;color:#1e40af}
+.tag.resolved{background:#dcfce7;color:#166534}
+
+/* ---------- MODAL ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(8,10,16,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  z-index:100;display:grid;place-items:center;padding:18px;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border-radius:20px;max-width:560px;width:100%;max-height:90vh;overflow:auto;
+  padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:pop .22s ease;position:relative}
+.modal h2{font-size:1.3rem;margin-bottom:6px}
+.modal .close{position:absolute;top:14px;right:14px}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:12px}
+
+/* ---------- TOAST ---------- */
+#toastRoot{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;
+  flex-direction:column;gap:10px;align-items:center;pointer-events:none}
+.toast{background:#14171d;color:#fff;padding:12px 22px;border-radius:12px;font-size:.88rem;font-weight:600;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);animation:slideUp .25s ease;max-width:90vw;
+  display:flex;align-items:center;gap:8px}
+.toast.ok{background:#15803d}.toast.err{background:#b91c1c}.toast.info{background:#1d4ed8}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+
+/* ---------- MISC ---------- */
+.empty{text-align:center;padding:56px 20px;color:var(--muted)}
+.empty .em{font-size:3rem;display:block;margin-bottom:12px;opacity:.55}
+.hero-detail{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+.hero-detail .photo{border-radius:20px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/3;
+  background-size:cover;background-position:center}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.kv div{background:var(--bg);border-radius:11px;padding:11px 14px}
+.kv small{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700}
+.kv b{font-size:.94rem}
+.divider{height:1px;background:var(--line);margin:22px 0}
+footer{background:var(--card);border-top:1px solid var(--line);padding:46px 0 26px;margin-top:40px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px;margin-bottom:32px}
+.foot-grid h5{font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px;color:var(--muted)}
+.foot-grid a{display:block;font-size:.88rem;padding:4px 0;color:var(--muted);transition:.15s}
+.foot-grid a:hover{color:var(--brand);transform:translateX(2px)}
+.copy{text-align:center;font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:22px}
+.db-badge{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;
+  padding:3px 10px;border-radius:999px;background:var(--soft);color:var(--brand);margin-top:6px}
+
+/* back to top */
+.back-top{position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;border:0;
+  background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:1.3rem;cursor:pointer;
+  box-shadow:0 10px 30px rgba(239,108,46,.4);opacity:0;transform:translateY(20px);transition:.3s;z-index:70;pointer-events:none}
+.back-top.show{opacity:1;transform:none;pointer-events:auto}
+.back-top:hover{transform:translateY(-3px)}
+
+/* strength meter */
+.strength{height:5px;border-radius:3px;background:var(--line);overflow:hidden;margin-top:4px}
+.strength span{display:block;height:100%;width:0;transition:.3s;background:var(--bad)}
+.strength.s1 span{width:25%;background:#dc2626}
+.strength.s2 span{width:50%;background:#e0a008}
+.strength.s3 span{width:75%;background:#65a30d}
+.strength.s4 span{width:100%;background:#16a34a}
+
+/* skeleton */
+.skeleton{background:linear-gradient(90deg,var(--line) 25%,var(--soft) 50%,var(--line) 75%);
+  background-size:200% 100%;animation:shine 1.5s infinite;border-radius:10px}
+@keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:1fr;gap:30px}
+  .hero-art{order:-1;max-width:280px;margin:0 auto}
+  .hero-art .blob{font-size:6rem}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .stat-strip{grid-template-columns:1fr 1fr}
+  .hero-detail{grid-template-columns:1fr}
+  .links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);
+    flex-direction:column;padding:12px;border-bottom:1px solid var(--line);box-shadow:var(--shadow);z-index:70}
+  .links.open{display:flex}
+  .hamburger{display:grid}
+  .grid2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#/home">
+      <span class="logo">🐾</span>
+      <span class="brand-txt"><b>THE CANINE HELP</b><small>Animal Rescue &amp; Adoption</small></span>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="#/home">Home</a>
+      <a href="#/adopt">Adopt</a>
+      <a href="#/lostfound">Lost &amp; Found</a>
+      <a href="#/report">Report Rescue</a>
+      <a href="#/volunteer">Volunteer</a>
+      <a href="#/donate">Donate</a>
+      <a href="#/about">About</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <div id="authArea"></div>
+      <button class="icon-btn hamburger" id="menuBtn">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#/home" style="margin-bottom:14px">
+          <span class="logo">🐾</span>
+          <span class="brand-txt"><b>THE CANINE HELP</b><small>Animal Rescue &amp; Adoption</small></span>
+        </a>
+        <p class="muted small" style="max-width:34ch">A volunteer-run rescue network working across India to
+          rescue, rehabilitate and rehome street &amp; abandoned dogs.</p>
+        <span class="db-badge">● <span id="dbStatus">IndexedDB</span> · real database</span>
+      </div>
+      <div>
+        <h5>Adopt</h5>
+        <a href="#/adopt">Browse Dogs</a>
+        <a href="#/adopt">Adoption Process</a>
+        <a href="#/dashboard">My Applications</a>
+      </div>
+      <div>
+        <h5>Get Involved</h5>
+        <a href="#/volunteer">Volunteer</a>
+        <a href="#/donate">Donate</a>
+        <a href="#/report">Report a Rescue</a>
+      </div>
+      <div>
+        <h5>Info</h5>
+        <a href="#/about">About Us</a>
+        <a href="#/lostfound">Lost &amp; Found</a>
+        <a href="#/about">Contact</a>
+      </div>
+    </div>
+    <div class="copy">© <span id="yr"></span> The Canine Help · Rescue · Rehabilitate · Rehome 🐾</div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" title="Back to top">↑</button>
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+/* =========================================================
+   THE CANINE HELP — single-file application
+   Database: IndexedDB (real browser database) with localStorage fallback
+   ========================================================= */
+
+/* ---------------- utils ---------------- */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const uid = p => p + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const now = () => Date.now();
+const fmtDate = ts => new Date(ts).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+const fmtDateTime = ts => new Date(ts).toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+function toast(msg, type = '') {
+  const icons = { ok:'✅', err:'⚠️', info:'ℹ️', '':'🐾' };
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span>${icons[type] || '🐾'}</span><span>${esc(msg)}</span>`;
+  $('#toastRoot').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(12px)'; }, 2600);
+  setTimeout(() => el.remove(), 3000);
+}
+
+/* ---------------- IndexedDB layer ---------------- */
+const DB_NAME = 'thecaninehelp';
+const DB_VERSION = 1;
+const STORES = ['users','dogs','applications','favorites','reports','volunteers','donations','lostfound','sessions','settings'];
+
+const IDB = {
+  db: null,
+  ready: false,
+  async open() {
+    if (this.db) return this.db;
+    this.db = await new Promise((res, rej) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        STORES.forEach(name => {
+          if (!db.objectStoreNames.contains(name)) {
+            db.createObjectStore(name, { keyPath: 'id' });
+          }
+        });
+        // indexes
+        const tx = e.target.transaction;
+        if (tx) {
+          try {
+            tx.objectStore('users').createIndex('email', 'email', { unique: true });
+            tx.objectStore('dogs').createIndex('status', 'status');
+            tx.objectStore('dogs').createIndex('city', 'city');
+            tx.objectStore('applications').createIndex('userId', 'userId');
+            tx.objectStore('applications').createIndex('dogId', 'dogId');
+            tx.objectStore('favorites').createIndex('userId', 'userId');
+            tx.objectStore('favorites').createIndex('dogId', 'dogId');
+            tx.objectStore('reports').createIndex('userId', 'userId');
+            tx.objectStore('volunteers').createIndex('userId', 'userId');
+            tx.objectStore('donations').createIndex('userId', 'userId');
+            tx.objectStore('lostfound').createIndex('userId', 'userId');
+          } catch (err) { /* indexes may already exist on upgrade */ }
+        }
+      };
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+    return this.db;
+  },
+  async get(store, key) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const r = db.transaction(store, 'readonly').objectStore(store).get(key);
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  },
+  async getAll(store) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const r = db.transaction(store, 'readonly').objectStore(store).getAll();
+      r.onsuccess = () => res(r.result || []);
+      r.onerror = () => rej(r.error);
+    });
+  },
+  async put(store, value) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction(store, 'readwrite');
+      tx.objectStore(store).put(value);
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error);
+    });
+  },
+  async del(store, key) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction(store, 'readwrite');
+      tx.objectStore(store).delete(key);
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error);
+    });
+  },
+  async clear(store) {
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction(store, 'readwrite');
+      tx.objectStore(store).clear();
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error);
+    });
+  }
+};
+
+/* LocalStorage fallback (same interface) */
+const LSDB = {
+  key: s => 'tch_db_' + s,
+  async get(store, key) { const all = await this.getAll(store); return all.find(x => x.id === key); },
+  async getAll(store) { try { return JSON.parse(localStorage.getItem(this.key(store)) || '[]'); } catch (e) { return []; } },
+  async put(store, value) {
+    const all = await this.getAll(store);
+    const idx = all.findIndex(x => x.id === value.id);
+    if (idx >= 0) all[idx] = value; else all.push(value);
+    localStorage.setItem(this.key(store), JSON.stringify(all));
+  },
+  async del(store, key) {
+    const all = (await this.getAll(store)).filter(x => x.id !== key);
+    localStorage.setItem(this.key(store), JSON.stringify(all));
+  },
+  async clear(store) { localStorage.removeItem(this.key(store)); }
+};
+
+const DB = window.indexedDB ? IDB : LSDB;
+
+/* ---------------- in-memory cache ---------------- */
+const cache = {
+  users: [], dogs: [], applications: [], favorites: [], reports: [],
+  volunteers: [], donations: [], lostfound: []
+};
+
+async function loadAllCache() {
+  for (const k of Object.keys(cache)) {
+    try { cache[k] = await DB.getAll(k); }
+    catch (e) { cache[k] = []; }
+  }
+}
+
+async function refreshStore(store) {
+  try { cache[store] = await DB.getAll(store); } catch (e) { /* noop */ }
+}
+
+/* ---------------- getters ---------------- */
+const getUsers = () => cache.users;
+const getDogs  = () => cache.dogs;
+const getApps  = () => cache.applications;
+const getFavs  = () => cache.favorites;
+const getReports = () => cache.reports;
+const getVols  = () => cache.volunteers;
+const getDonos = () => cache.donations;
+const getLost  = () => cache.lostfound;
+const getDog = id => cache.dogs.find(d => d.id === id);
+
+/* ---------------- auth utilities ---------------- */
+function fallbackHash(str) {
+  let h1 = 0x811c9dc5, h2 = 0x1000193;
+  for (let i = 0; i < str.length; i++) {
+    h1 = ((h1 ^ str.charCodeAt(i)) * 16777619) >>> 0;
+    h2 = ((h2 + str.charCodeAt(i)) * 2654435761) >>> 0;
+  }
+  return 'fb' + h1.toString(16).padStart(8,'0') + h2.toString(16).padStart(8,'0');
+}
+async function hashPw(pw, salt) {
+  const data = salt + '::' + pw;
+  if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+    try {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+    } catch (e) {}
+  }
+  return fallbackHash(data);
+}
+
+function passwordStrength(pw) {
+  let s = 0;
+  if (pw.length >= 6) s++;
+  if (pw.length >= 10) s++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw)) s++;
+  if (/[^A-Za-z0-9]/.test(pw)) s++;
+  return Math.min(s, 4);
+}
+
+/* ---------------- session ---------------- */
+const SESSION_KEY = 'tch_session_token';
+let CURRENT = null;
+
+async function createSession(user, remember) {
+  const token = uid('tok_');
+  const days = remember ? 30 : 1;
+  const session = { id: token, userId: user.id, expires: now() + days * 86400000, createdAt: now() };
+  await DB.put('sessions', session);
+  try { localStorage.setItem(SESSION_KEY, token); } catch (e) {}
+  return token;
+}
+
+async function restoreSession() {
+  let token = null;
+  try { token = localStorage.getItem(SESSION_KEY); } catch (e) {}
+  if (!token) return null;
+  try {
+    const s = await DB.get('sessions', token);
+    if (!s || s.expires < now()) {
+      if (s) await DB.del('sessions', token);
+      try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+      return null;
+    }
+    return cache.users.find(u => u.id === s.userId) || null;
+  } catch (e) { return null; }
+}
+
+async function clearSession() {
+  let token = null;
+  try { token = localStorage.getItem(SESSION_KEY); } catch (e) {}
+  if (token) { try { await DB.del('sessions', token); } catch (e) {} }
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+}
+
+/* ---------------- rate limiting ---------------- */
+function rateKey(email) { return 'tch_rl_' + email.toLowerCase(); }
+function checkRate(email) {
+  try {
+    const raw = localStorage.getItem(rateKey(email));
+    if (!raw) return { ok: true };
+    const r = JSON.parse(raw);
+    if (r.lockedUntil && r.lockedUntil > now()) {
+      return { ok: false, seconds: Math.ceil((r.lockedUntil - now()) / 1000) };
+    }
+    return { ok: true };
+  } catch (e) { return { ok: true }; }
+}
+function recordFail(email) {
+  try {
+    const raw = localStorage.getItem(rateKey(email));
+    const r = raw ? JSON.parse(raw) : { count: 0 };
+    r.count = (r.count || 0) + 1;
+    if (r.count >= 5) { r.lockedUntil = now() + 30000; r.count = 0; }
+    localStorage.setItem(rateKey(email), JSON.stringify(r));
+  } catch (e) {}
+}
+function recordSuccess(email) {
+  try { localStorage.removeItem(rateKey(email)); } catch (e) {}
+}
+
+/* ---------------- seed data ---------------- */
+const SEED_DOGS = [
+  { id:'d1', name:'Bruno', breed:'Labrador Retriever', age:2, ageUnit:'years', gender:'Male', size:'Large',
+    city:'Mumbai', state:'Maharashtra', hue:24, emoji:'🐕', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*8,
+    desc:'Bruno was rescued from a construction site in Andheri. He is extremely friendly, leash-trained and loves playing fetch. Fully vaccinated and looking for a family who can give him daily walks.' },
+  { id:'d2', name:'Simba', breed:'Indie (Indian Pariah)', age:1, ageUnit:'years', gender:'Male', size:'Medium',
+    city:'Delhi', state:'Delhi', hue:200, emoji:'🐶', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:false, postedAt:now()-86400000*5,
+    desc:'Simba is a smart, energetic indie pup rescued from a busy road in Rohini. He knows basic commands and is crate trained. Best suited for an active family.' },
+  { id:'d3', name:'Bella', breed:'Golden Retriever', age:4, ageUnit:'years', gender:'Female', size:'Large',
+    city:'Bengaluru', state:'Karnataka', hue:38, emoji:'🐩', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*12,
+    desc:'Bella was surrendered by a family relocating abroad. She is gentle, calm, house-trained and wonderful with children. A true couch companion.' },
+  { id:'d4', name:'Rocky', breed:'German Shepherd', age:3, ageUnit:'years', gender:'Male', size:'Large',
+    city:'Pune', state:'Maharashtra', hue:210, emoji:'🐕‍🦺', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:false, goodWithPets:false, postedAt:now()-86400000*3,
+    desc:'Rocky is a confident, protective boy who needs an experienced handler. He is highly trainable and would excel with someone who enjoys structured training.' },
+  { id:'d5', name:'Luna', breed:'Indie (Indian Pariah)', age:6, ageUnit:'months', gender:'Female', size:'Small',
+    city:'Hyderabad', state:'Telangana', hue:320, emoji:'🐶', status:'available', vaccinated:true, sterilized:false,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*2,
+    desc:'Luna is a playful 6-month-old pup found in a drain during monsoon. She is now healthy, dewormed and ready for her forever home. Will grow to medium size.' },
+  { id:'d6', name:'Coco', breed:'Beagle', age:2, ageUnit:'years', gender:'Female', size:'Medium',
+    city:'Chennai', state:'Tamil Nadu', hue:15, emoji:'🐕', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*20,
+    desc:'Coco is a curious, nose-driven beagle who loves sniffing walks. She is affectionate and gets along with other dogs. Needs secure fencing as she loves to explore.' },
+  { id:'d7', name:'Tiger', breed:'Indie (Indian Pariah)', age:5, ageUnit:'years', gender:'Male', size:'Medium',
+    city:'Jaipur', state:'Rajasthan', hue:45, emoji:'🐕', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*30,
+    desc:'Tiger is a calm senior soul rescued after a road accident. Fully recovered and is the most loyal companion you could ask for. Loves sunbathing.' },
+  { id:'d8', name:'Daisy', breed:'Pug', age:3, ageUnit:'years', gender:'Female', size:'Small',
+    city:'Kolkata', state:'West Bengal', hue:280, emoji:'🐶', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:false, postedAt:now()-86400000*15,
+    desc:'Daisy is a sweet apartment dog who loves laps and short walks. She is house-trained and mostly quiet. Ideal for a small flat with plenty of cuddles.' },
+  { id:'d9', name:'Max', breed:'Rottweiler', age:4, ageUnit:'years', gender:'Male', size:'Large',
+    city:'Ahmedabad', state:'Gujarat', hue:0, emoji:'🐕‍🦺', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:false, goodWithPets:false, postedAt:now()-86400000*6,
+    desc:'Max was rescued from a breeder who abandoned him. Despite his size he is a soft, obedient boy. Needs a family with large-dog experience.' },
+  { id:'d10', name:'Moti', breed:'Indie (Indian Pariah)', age:8, ageUnit:'months', gender:'Male', size:'Small',
+    city:'Lucknow', state:'Uttar Pradesh', hue:160, emoji:'🐶', status:'available', vaccinated:true, sterilized:false,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*1,
+    desc:'Moti is a bright little pup who was found with his siblings near a market. He is social, playful and loves everyone he meets.' },
+  { id:'d11', name:'Sheru', breed:'Husky Mix', age:2, ageUnit:'years', gender:'Male', size:'Medium',
+    city:'Chandigarh', state:'Punjab', hue:190, emoji:'🐺', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:false, postedAt:now()-86400000*9,
+    desc:'Sheru has the stunning looks of a husky and the heart of an indie. High energy — needs daily runs and a cool climate. Escapes artist, secure yard required.' },
+  { id:'d12', name:'Nyla', breed:'Indie (Indian Pariah)', age:3, ageUnit:'years', gender:'Female', size:'Medium',
+    city:'Mumbai', state:'Maharashtra', hue:340, emoji:'🐕', status:'available', vaccinated:true, sterilized:true,
+    goodWithKids:true, goodWithPets:true, postedAt:now()-86400000*4,
+    desc:'Nyla was rescued while pregnant and raised her pups on the street. All pups were adopted — now it is her turn. Gentle, grateful and incredibly loving.' }
+];
+
+const SEED_STORIES = [
+  { name:'Bruno', text:'Adopted by the Mehta family in Bandra after 3 months at our shelter. Now a certified therapy dog visiting old-age homes.', emoji:'🐕', who:'Mehta Family, Mumbai' },
+  { name:'Luna', text:'Found in a monsoon drain at 4 weeks old. Today she is the queen of a Bengaluru apartment and a certified couch potato.', emoji:'🐶', who:'Rhea & Karan, Bengaluru' },
+  { name:'Tiger', text:'Hit by a car in 2023, rehabilitated for 5 months. Now lives with a retired army officer in Jaipur and goes on 2 walks a day.', emoji:'🐕', who:'Col. Sharma, Jaipur' }
+];
+
+/* ---------------- ui state ---------------- */
+let dashTab = 'apps';
+let adminTab = 'dogs';
+let adminSearch = { dogs:'', apps:'', users:'' };
+let filters = { q:'', breed:'', size:'', gender:'', city:'', sort:'new' };
+
+/* ---------------- image helper ---------------- */
+function dogImg(d) {
+  if (d.photo) return d.photo;
+  const hue = d.hue ?? 25;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="hsl(' + hue + ',85%,74%)"/>' +
+    '<stop offset="1" stop-color="hsl(' + ((hue + 45) % 360) + ',75%,52%)"/>' +
+    '</linearGradient></defs>' +
+    '<rect width="400" height="300" fill="url(#g)"/>' +
+    '<circle cx="330" cy="60" r="90" fill="rgba(255,255,255,.14)"/>' +
+    '<circle cx="60" cy="260" r="70" fill="rgba(255,255,255,.10)"/>' +
+    '<text x="200" y="185" font-size="120" text-anchor="middle">' + (d.emoji || '🐕') + '</text>' +
+    '</svg>';
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+/* =========================================================
+   AUTH UI
+   ========================================================= */
+function requireLogin(action) {
+  if (CURRENT) return true;
+  toast('Please login to ' + action, 'err');
+  openAuth('login');
+  return false;
+}
+
+function openAuth(mode = 'login') {
+  openModal(`
+    <div class="modal-head">
+      <div>
+        <h2>${mode === 'login' ? 'Welcome back 🐾' : 'Join The Canine Help'}</h2>
+        <p class="muted small">${mode === 'login' ? 'Login to manage adoptions, reports & favourites.' : 'Create a free account to adopt, volunteer or report a rescue.'}</p>
+      </div>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <div class="tabs" style="margin-bottom:18px">
+      <button class="${mode === 'login' ? 'active' : ''}" data-act="switchAuth" data-mode="login">Login</button>
+      <button class="${mode === 'signup' ? 'active' : ''}" data-act="switchAuth" data-mode="signup">Sign Up</button>
+    </div>
+    ${mode === 'login' ? `
+      <form class="form" data-form="login">
+        <label>Email<input type="email" name="email" required placeholder="you@example.com" autocomplete="email"></label>
+        <label>Password
+          <div class="pwd-wrap">
+            <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+          </div>
+        </label>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <label style="flex-direction:row;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--text);font-size:.88rem;cursor:pointer">
+            <input type="checkbox" name="remember" style="width:auto"> Remember me
+          </label>
+          <button type="button" class="btn sm ghost" data-act="forgotPwd">Forgot password?</button>
+        </div>
+        <button class="btn primary block" type="submit">Login</button>
+        <p class="small muted center">Demo admin → <b>admin@caninehelp.org</b> / <b>admin123</b></p>
+      </form>` : `
+      <form class="form grid2" data-form="signup">
+        <label>Full Name<input name="name" required placeholder="Your name" minlength="2"></label>
+        <label>Email<input type="email" name="email" required placeholder="you@example.com"></label>
+        <label>Phone<input name="phone" required placeholder="+91 98765 43210" pattern="[0-9+\\-\\s]{8,}"></label>
+        <label>City<input name="city" required placeholder="Mumbai"></label>
+        <label class="full">Password
+          <div class="pwd-wrap">
+            <input type="password" name="password" required minlength="6" placeholder="min 6 characters" data-strength>
+            <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+          </div>
+          <div class="strength" id="strengthMeter"><span></span></div>
+        </label>
+        <label class="full">Confirm Password
+          <div class="pwd-wrap">
+            <input type="password" name="confirm" required minlength="6" placeholder="repeat password">
+            <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+          </div>
+        </label>
+        <button class="btn primary block full" type="submit">Create Account</button>
+      </form>`}
+  `);
+}
+
+async function doSignup(data) {
+  if (data.password !== data.confirm) return toast('Passwords do not match', 'err');
+  if (data.password.length < 6) return toast('Password must be at least 6 characters', 'err');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return toast('Please enter a valid email', 'err');
+
+  const email = data.email.trim().toLowerCase();
+  if (getUsers().some(u => u.email.toLowerCase() === email))
+    return toast('This email is already registered', 'err');
+
+  const salt = uid('s');
+  const user = {
+    id: uid('u_'), name: data.name.trim(), email, phone: data.phone.trim(),
+    city: data.city.trim(), role: 'user',
+    salt, hash: await hashPw(data.password, salt), createdAt: now()
+  };
+  await DB.put('users', user);
+  await refreshStore('users');
+  CURRENT = user;
+  await createSession(user, false);
+  closeModal();
+  renderAuthArea();
+  render();
+  toast('Welcome to The Canine Help, ' + user.name.split(' ')[0] + '! 🐾', 'ok');
+}
+
+async function doLogin(email, password, remember) {
+  email = String(email).trim().toLowerCase();
+  const rl = checkRate(email);
+  if (!rl.ok) return toast('Too many attempts. Try again in ' + rl.seconds + 's', 'err');
+
+  const user = getUsers().find(u => u.email.toLowerCase() === email);
+  if (!user) { recordFail(email); return toast('No account found with this email', 'err'); }
+
+  const h = await hashPw(password, user.salt);
+  if (h !== user.hash) { recordFail(email); return toast('Incorrect password', 'err'); }
+
+  recordSuccess(email);
+  CURRENT = user;
+  await createSession(user, !!remember);
+  closeModal();
+  renderAuthArea();
+  render();
+  toast('Logged in as ' + user.name, 'ok');
+}
+
+function openForgotPw() {
+  openModal(`
+    <div class="modal-head">
+      <h2>Reset Password</h2>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <p class="muted small" style="margin-bottom:16px">Enter your registered email. We'll generate a demo reset code (shown on screen — in production this would be emailed).</p>
+    <form class="form" data-form="forgot">
+      <label>Registered Email<input type="email" name="email" required placeholder="you@example.com"></label>
+      <button class="btn primary block" type="submit">Send Reset Code</button>
+    </form>
+    <div id="resetArea"></div>
+  `);
+}
+
+function openResetForm(email, code) {
+  const area = $('#resetArea');
+  if (!area) return;
+  area.innerHTML = `
+    <div class="divider"></div>
+    <div class="panel" style="padding:14px;background:var(--soft);margin-bottom:14px">
+      <b>Demo reset code: <span style="font-size:1.2rem;letter-spacing:.15em">${code}</span></b>
+      <p class="small muted">In a real app this is emailed. Use it below.</p>
+    </div>
+    <form class="form" data-form="reset" data-email="${esc(email)}" data-code="${esc(code)}">
+      <label>Reset Code<input name="code" required placeholder="Enter code"></label>
+      <label>New Password
+        <div class="pwd-wrap">
+          <input type="password" name="password" required minlength="6" placeholder="min 6 characters">
+          <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+        </div>
+      </label>
+      <button class="btn primary block" type="submit">Reset Password</button>
+    </form>
+  `;
+}
+
+async function logout() {
+  await clearSession();
+  CURRENT = null;
+  renderAuthArea();
+  location.hash = '#/home';
+  render();
+  toast('Logged out', 'info');
+}
+
+function renderAuthArea() {
+  const el = $('#authArea');
+  if (CURRENT) {
+    el.innerHTML = `
+      <div class="userchip" data-act="toggleDrop">
+        <span class="avatar">${esc(CURRENT.name.charAt(0).toUpperCase())}</span>
+        <span class="uname">${esc(CURRENT.name.split(' ')[0])}</span>
+      </div>
+      <div class="dropdown" id="userDrop">
+        <a href="#/dashboard">📋 My Dashboard</a>
+        ${CURRENT.role === 'admin' ? '<a href="#/admin">🛠 Admin Panel</a>' : ''}
+        <button data-act="openProfile">⚙️ Edit Profile</button>
+        <button data-act="openChangePw">🔒 Change Password</button>
+        <button data-act="logout">🚪 Logout</button>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <button class="btn ghost sm" data-act="openAuth" data-mode="login">Login</button>
+      <button class="btn primary sm" data-act="openAuth" data-mode="signup">Sign Up</button>`;
+  }
+}
+
+/* =========================================================
+   MODAL SYSTEM
+   ========================================================= */
+function openModal(html) {
+  $('#modalRoot').innerHTML = `<div class="modal-bg" data-act="bgClose"><div class="modal">${html}</div></div>`;
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  $('#modalRoot').innerHTML = '';
+  document.body.style.overflow = '';
+}
+function confirmDialog(title, message, onConfirm, confirmLabel = 'Confirm', danger = true) {
+  openModal(`
+    <div class="modal-head">
+      <div>
+        <h2>${esc(title)}</h2>
+        <p class="muted small">${esc(message)}</p>
+      </div>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn ghost" data-act="closeModal">Cancel</button>
+      <button class="btn ${danger ? 'danger' : 'primary'}" id="confirmOkBtn">${esc(confirmLabel)}</button>
+    </div>
+  `);
+  $('#confirmOkBtn').addEventListener('click', () => { closeModal(); onConfirm(); }, { once: true });
+}
+
+/* =========================================================
+   ROUTER
+   ========================================================= */
+function parseHash() {
+  const raw = location.hash.replace(/^#\/?/, '') || 'home';
+  return raw.split('/');
+}
+
+function render() {
+  const parts = parseHash();
+  const route = parts[0];
+  const main = $('#main');
+  $$('#navLinks a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#/' + route));
+
+  let html = '';
+  switch (route) {
+    case 'home':       html = viewHome(); break;
+    case 'adopt':      html = viewAdopt(); break;
+    case 'dog':        html = viewDog(parts[1]); break;
+    case 'dashboard':  html = viewDashboard(); break;
+    case 'admin':      html = viewAdmin(); break;
+    case 'report':     html = viewReport(); break;
+    case 'volunteer':  html = viewVolunteer(); break;
+    case 'donate':     html = viewDonate(); break;
+    case 'lostfound':  html = viewLostFound(); break;
+    case 'about':      html = viewAbout(); break;
+    default:           html = `<div class="wrap empty"><span class="em">🐾</span>Page not found</div>`;
+  }
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+
+  if (route === 'adopt') applyFilters();
+  setupReveal();
+  animateCounters();
+}
+
+/* =========================================================
+   REVEAL & COUNTERS
+   ========================================================= */
+let revealObserver = null;
+function setupReveal() {
+  if (revealObserver) revealObserver.disconnect();
+  revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('revealed'); revealObserver.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  $$('.reveal').forEach(el => revealObserver.observe(el));
+}
+
+function animateCounters() {
+  $$('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    if (isNaN(target)) return;
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    const duration = 1500;
+    const start = performance.now();
+    function tick(t) {
+      const p = Math.min((t - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(target * eased).toLocaleString('en-IN');
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+/* =========================================================
+   VIEW: HOME
+   ========================================================= */
+function viewHome() {
+  const dogs = getDogs();
+  const available = dogs.filter(d => d.status === 'available');
+  const featured = available.slice(0, 6);
+  const adoptedTotal = getApps().filter(a => a.status === 'approved').length + 1240;
+
+  return `
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="pill">🐾 Rescue · Rehabilitate · Rehome</span>
+        <h1>Every dog deserves a <span class="hl">second chance</span> at a happy home.</h1>
+        <p class="lead">The Canine Help is a volunteer-powered rescue network connecting street &amp;
+          abandoned dogs with loving families across India. Adopt, foster, volunteer or report a rescue —
+          every action saves a life.</p>
+        <div class="hero-cta">
+          <a class="btn primary" href="#/adopt">🐕 Adopt a Dog</a>
+          <a class="btn ghost" href="#/report">🚨 Report a Rescue</a>
+        </div>
+      </div>
+      <div class="hero-art"><div class="blob">🐕</div></div>
+    </div>
+    <div class="wrap">
+      <div class="stat-strip">
+        <div class="stat reveal"><b data-count="${adoptedTotal}">0</b><span>Dogs Adopted</span></div>
+        <div class="stat reveal"><b data-count="${available.length}">0</b><span>Awaiting Homes</span></div>
+        <div class="stat reveal"><b data-count="${getVols().length + 320}">0</b><span>Volunteers</span></div>
+        <div class="stat reveal"><b data-count="${getReports().length + 2150}">0</b><span>Rescues Done</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>Meet our <span style="color:var(--brand)">furry friends</span></h2>
+        <p>These beautiful souls are vaccinated, health-checked and waiting for a family to call their own.</p>
+      </div>
+      <div class="grid g3">${featured.map(dogCard).join('')}</div>
+      <div class="center" style="margin-top:34px">
+        <a class="btn primary" href="#/adopt">View All ${available.length} Dogs →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="background:var(--card);border-block:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head reveal"><h2>How it works</h2><p>Four simple steps between you and your new best friend.</p></div>
+      <div class="grid g4">
+        <div class="step reveal"><span class="num">1</span><div class="ico">🔍</div><h4>Browse &amp; Choose</h4><p>Filter by breed, age, size and city to find the dog that fits your lifestyle.</p></div>
+        <div class="step reveal"><span class="num">2</span><div class="ico">📝</div><h4>Apply Online</h4><p>Fill a short adoption form. Our team reviews every application within 48 hours.</p></div>
+        <div class="step reveal"><span class="num">3</span><div class="ico">🤝</div><h4>Meet &amp; Greet</h4><p>Schedule a visit at the shelter or a foster home to spend time with your dog.</p></div>
+        <div class="step reveal"><span class="num">4</span><div class="ico">🏡</div><h4>Welcome Home</h4><p>Sign the adoption papers, pay a nominal fee and take your buddy home forever.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head reveal"><h2>Happy tails 🐾</h2><p>Real stories from families who adopted through us.</p></div>
+      <div class="grid g3">
+        ${SEED_STORIES.map(s => `
+          <div class="card reveal" style="padding:24px">
+            <div style="font-size:2.4rem;margin-bottom:10px">${s.emoji}</div>
+            <p style="font-size:.94rem;margin-bottom:14px">"${s.text}"</p>
+            <div class="small muted"><b style="color:var(--brand)">${s.who}</b> · adopted ${s.name}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <section class="block" style="background:var(--card);border-block:1px solid var(--line)">
+    <div class="wrap" style="max-width:820px">
+      <div class="sec-head reveal"><h2>Frequently asked questions</h2><p>Everything you want to know before adopting.</p></div>
+      <details class="faq reveal"><summary>Is there an adoption fee?</summary><p>Yes — a nominal ₹2,000–₹5,000 contribution covers vaccination, sterilisation and health-check costs already spent on the dog. It is waived for senior citizens and verified NGOs.</p></details>
+      <details class="faq reveal"><summary>Can I adopt if I live in a rented apartment?</summary><p>Absolutely. We only ask for landlord permission and that the dog is not left alone for more than 6 hours a day. We do a short telephonic home check.</p></details>
+      <details class="faq reveal"><summary>What if the adoption doesn't work out?</summary><p>You can return the dog to us at any time — no questions asked. We always prioritise the dog's wellbeing and will re-home them.</p></details>
+      <details class="faq reveal"><summary>Do you deliver dogs outside the city?</summary><p>Yes, we arrange transport for out-of-city adoptions within India. The adopter covers the travel cost and we do a video home check first.</p></details>
+      <details class="faq reveal"><summary>How can I volunteer if I'm busy?</summary><p>Even 2–3 hours a week helps. You can choose weekend feeding, virtual social media help, foster a dog for a few weeks, or just sponsor a rescue.</p></details>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="wrap">
+      <div class="panel center reveal" style="background:linear-gradient(135deg,var(--soft),transparent);padding:48px 26px">
+        <h2 style="font-size:1.8rem;margin-bottom:12px">Can't adopt right now?</h2>
+        <p class="muted" style="max-width:56ch;margin:0 auto 24px">You can still change a life. Volunteer at a shelter,
+          sponsor a rescue or donate a meal — every contribution counts.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a class="btn primary" href="#/donate">💛 Donate Now</a>
+          <a class="btn ghost" href="#/volunteer">🙋 Become a Volunteer</a>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   DOG CARD
+   ========================================================= */
+function dogCard(d) {
+  const fav = CURRENT && getFavs().some(f => f.userId === CURRENT.id && f.dogId === d.id);
+  return `
+  <article class="card dog-card">
+    <div class="dog-photo" style="background-image:url('${dogImg(d)}')">
+      <span class="badge ${d.status}">${d.status}</span>
+      <button class="fav ${fav ? 'on' : ''}" data-act="fav" data-id="${d.id}" title="Save to favourites">${fav ? '❤️' : '🤍'}</button>
+    </div>
+    <div class="dog-body">
+      <h3>${esc(d.name)} <span class="muted" style="font-weight:500;font-size:.85rem">· ${esc(d.breed)}</span></h3>
+      <p class="meta">${d.age} ${d.ageUnit} · ${esc(d.gender)} · ${esc(d.size)}</p>
+      <p class="loc">📍 ${esc(d.city)}, ${esc(d.state)}</p>
+      <div class="chips">
+        ${d.vaccinated ? '<span class="chip ok">Vaccinated</span>' : '<span class="chip warn">Not Vaccinated</span>'}
+        ${d.sterilized ? '<span class="chip ok">Sterilized</span>' : '<span class="chip warn">Not Sterilized</span>'}
+        ${d.goodWithKids ? '<span class="chip">Kid Friendly</span>' : ''}
+      </div>
+      <a class="btn primary sm block" href="#/dog/${d.id}">Meet ${esc(d.name)} →</a>
+    </div>
+  </article>`;
+}
+
+/* =========================================================
+   VIEW: ADOPT
+   ========================================================= */
+function viewAdopt() {
+  const dogs = getDogs();
+  const breeds = [...new Set(dogs.map(d => d.breed))].sort();
+  const cities  = [...new Set(dogs.map(d => d.city))].sort();
+
+  return `
+  <section class="block" style="padding-top:40px">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Find your new best friend</h2>
+        <p>${dogs.filter(d => d.status === 'available').length} dogs currently looking for a forever home.</p>
+      </div>
+      <div class="filters">
+        <label class="fld">Search
+          <input id="fq" placeholder="Name or breed…" value="${esc(filters.q)}">
+        </label>
+        <label class="fld">Breed
+          <select id="fbreed">
+            <option value="">All breeds</option>
+            ${breeds.map(b => `<option ${filters.breed === b ? 'selected' : ''}>${esc(b)}</option>`).join('')}
+          </select>
+        </label>
+        <label class="fld">Size
+          <select id="fsize">
+            <option value="">Any size</option>
+            ${['Small','Medium','Large'].map(s => `<option ${filters.size === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </label>
+        <label class="fld">Gender
+          <select id="fgender">
+            <option value="">Any</option>
+            ${['Male','Female'].map(s => `<option ${filters.gender === s ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </label>
+        <label class="fld">City
+          <select id="fcity">
+            <option value="">All cities</option>
+            ${cities.map(c => `<option ${filters.city === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+          </select>
+        </label>
+        <label class="fld">Sort by
+          <select id="fsort">
+            <option value="new" ${filters.sort === 'new' ? 'selected' : ''}>Newest first</option>
+            <option value="young" ${filters.sort === 'young' ? 'selected' : ''}>Youngest first</option>
+            <option value="name" ${filters.sort === 'name' ? 'selected' : ''}>Name (A–Z)</option>
+          </select>
+        </label>
+      </div>
+      <div id="dogGrid" class="grid g3"></div>
+    </div>
+  </section>`;
+}
+
+function applyFilters() {
+  const grid = $('#dogGrid');
+  if (!grid) return;
+
+  const fq = $('#fq'), fb = $('#fbreed'), fs = $('#fsize'), fg = $('#fgender'), fc = $('#fcity'), fso = $('#fsort');
+
+  filters.q = fq ? fq.value : '';
+  filters.breed = fb ? fb.value : '';
+  filters.size = fs ? fs.value : '';
+  filters.gender = fg ? fg.value : '';
+  filters.city = fc ? fc.value : '';
+  filters.sort = fso ? fso.value : 'new';
+
+  let list = getDogs().filter(d => d.status === 'available');
+  const q = filters.q.trim().toLowerCase();
+  if (q) list = list.filter(d => (d.name + ' ' + d.breed + ' ' + d.city).toLowerCase().includes(q));
+  if (filters.breed) list = list.filter(d => d.breed === filters.breed);
+  if (filters.size) list = list.filter(d => d.size === filters.size);
+  if (filters.gender) list = list.filter(d => d.gender === filters.gender);
+  if (filters.city) list = list.filter(d => d.city === filters.city);
+
+  if (filters.sort === 'young') list.sort((a, b) => a.age - b.age);
+  else if (filters.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
+  else list.sort((a, b) => b.postedAt - a.postedAt);
+
+  grid.innerHTML = list.length
+    ? list.map(dogCard).join('')
+    : `<div class="empty" style="grid-column:1/-1"><span class="em">🐕</span>No dogs match your filters. Try widening your search.</div>`;
+}
+
+/* =========================================================
+   VIEW: DOG DETAIL
+   ========================================================= */
+function viewDog(id) {
+  const d = getDog(id);
+  if (!d) return `<div class="wrap empty"><span class="em">🐾</span>Dog not found. <a href="#/adopt" style="color:var(--brand)">Back to adopt</a></div>`;
+  const fav = CURRENT && getFavs().some(f => f.userId === CURRENT.id && f.dogId === d.id);
+  const myApp = CURRENT ? getApps().find(a => a.userId === CURRENT.id && a.dogId === d.id) : null;
+
+  return `
+  <section class="block" style="padding-top:36px">
+    <div class="wrap">
+      <a href="#/adopt" class="small muted" style="display:inline-block;margin-bottom:18px">← Back to all dogs</a>
+      <div class="hero-detail">
+        <div>
+          <div class="photo" style="background-image:url('${dogImg(d)}')"></div>
+          <div class="kv">
+            <div><small>Age</small><b>${d.age} ${d.ageUnit}</b></div>
+            <div><small>Gender</small><b>${esc(d.gender)}</b></div>
+            <div><small>Size</small><b>${esc(d.size)}</b></div>
+            <div><small>Breed</small><b>${esc(d.breed)}</b></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+            <h1 style="font-size:2.2rem;margin:0">${esc(d.name)}</h1>
+            <span class="badge ${d.status}" style="position:static">${d.status}</span>
+          </div>
+          <p class="muted" style="margin-bottom:16px">📍 ${esc(d.city)}, ${esc(d.state)} · Listed ${fmtDate(d.postedAt)}</p>
+          <p style="margin-bottom:18px">${esc(d.desc)}</p>
+
+          <div class="chips" style="margin-bottom:20px">
+            ${d.vaccinated ? '<span class="chip ok">✔ Vaccinated</span>' : '<span class="chip warn">Not Vaccinated</span>'}
+            ${d.sterilized ? '<span class="chip ok">✔ Sterilized</span>' : '<span class="chip warn">Not Sterilized</span>'}
+            ${d.goodWithKids ? '<span class="chip">👶 Good with kids</span>' : '<span class="chip bad">No kids</span>'}
+            ${d.goodWithPets ? '<span class="chip">🐾 Good with pets</span>' : '<span class="chip bad">No other pets</span>'}
+          </div>
+
+          <div class="divider"></div>
+
+          ${myApp ? `
+            <div class="panel" style="padding:18px;background:var(--soft)">
+              <b>Your application status:</b>
+              <span class="tag ${myApp.status}">${myApp.status}</span>
+              <p class="small muted" style="margin-top:8px">Submitted on ${fmtDate(myApp.createdAt)}. Our team will contact you shortly.</p>
+              <a class="btn ghost sm" href="#/dashboard" style="margin-top:10px">View in Dashboard</a>
+            </div>` : d.status === 'available' ? `
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn primary" data-act="apply" data-id="${d.id}">📝 Apply to Adopt</button>
+              <button class="btn ghost" data-act="fav" data-id="${d.id}">${fav ? '❤️ Saved' : '🤍 Save'}</button>
+              <button class="btn ghost" data-act="shareDog" data-id="${d.id}">🔗 Share</button>
+              <a class="btn ghost" href="#/donate">💛 Sponsor ${esc(d.name)}</a>
+            </div>` : `
+            <div class="panel" style="padding:18px;background:var(--soft)">
+              <b>This dog is ${d.status}.</b>
+              <p class="small muted">Check out other dogs waiting for a home.</p>
+              <a class="btn primary sm" href="#/adopt" style="margin-top:10px">Browse Dogs</a>
+            </div>`}
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   APPLY MODAL
+   ========================================================= */
+function openApply(dogId) {
+  if (!requireLogin('apply for adoption')) return;
+  const d = getDog(dogId);
+  if (!d) return;
+  if (getApps().some(a => a.userId === CURRENT.id && a.dogId === dogId))
+    return toast('You have already applied for ' + d.name, 'err');
+
+  openModal(`
+    <div class="modal-head">
+      <div>
+        <h2>Adoption Application</h2>
+        <p class="muted small">Applying to adopt <b>${esc(d.name)}</b> · ${esc(d.breed)} · ${esc(d.city)}</p>
+      </div>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <form class="form grid2" data-form="apply" data-id="${d.id}">
+      <label>Full Name<input name="name" required value="${esc(CURRENT.name)}"></label>
+      <label>Phone<input name="phone" required value="${esc(CURRENT.phone || '')}"></label>
+      <label>City<input name="city" required value="${esc(CURRENT.city || '')}"></label>
+      <label>Home Type
+        <select name="home"><option>Apartment</option><option>Independent House</option><option>Farm / Rural</option></select>
+      </label>
+      <label>Do you have a yard?
+        <select name="yard"><option>Yes</option><option>No</option></select>
+      </label>
+      <label>Other pets at home?
+        <select name="pets"><option>No</option><option>Yes</option></select>
+      </label>
+      <label class="full">Why do you want to adopt ${esc(d.name)}?
+        <textarea name="reason" rows="4" required placeholder="Tell us about your home, daily routine and experience with dogs…"></textarea>
+      </label>
+      <button class="btn primary block full" type="submit">Submit Application</button>
+    </form>
+  `);
+}
+
+/* =========================================================
+   PROFILE & CHANGE PASSWORD
+   ========================================================= */
+function openProfile() {
+  if (!CURRENT) return;
+  openModal(`
+    <div class="modal-head">
+      <h2>Edit Profile</h2>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <form class="form grid2" data-form="profile">
+      <label>Full Name<input name="name" required value="${esc(CURRENT.name)}"></label>
+      <label>Email<input type="email" name="email" required value="${esc(CURRENT.email)}"></label>
+      <label>Phone<input name="phone" required value="${esc(CURRENT.phone || '')}"></label>
+      <label>City<input name="city" required value="${esc(CURRENT.city || '')}"></label>
+      <button class="btn primary block full" type="submit">Save Changes</button>
+    </form>
+  `);
+}
+
+function openChangePw() {
+  if (!CURRENT) return;
+  openModal(`
+    <div class="modal-head">
+      <h2>Change Password</h2>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <form class="form" data-form="changePw">
+      <label>Current Password
+        <div class="pwd-wrap">
+          <input type="password" name="current" required>
+          <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+        </div>
+      </label>
+      <label>New Password
+        <div class="pwd-wrap">
+          <input type="password" name="password" required minlength="6">
+          <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+        </div>
+      </label>
+      <label>Confirm New Password
+        <div class="pwd-wrap">
+          <input type="password" name="confirm" required minlength="6">
+          <button type="button" class="pwd-toggle" data-act="togglePwd">👁️</button>
+        </div>
+      </label>
+      <button class="btn primary block" type="submit">Update Password</button>
+    </form>
+  `);
+}
+
+/* =========================================================
+   VIEW: DASHBOARD
+   ========================================================= */
+function viewDashboard() {
+  if (!CURRENT) {
+    return `<div class="wrap empty">
+      <span class="em">🔐</span>
+      <h2 style="margin-bottom:8px">Please login to view your dashboard</h2>
+      <p class="muted" style="margin-bottom:20px">Track your applications, favourites and reports.</p>
+      <button class="btn primary" data-act="openAuth" data-mode="login">Login / Sign Up</button>
+    </div>`;
+  }
+
+  const apps = getApps().filter(a => a.userId === CURRENT.id);
+  const favs = getFavs().filter(f => f.userId === CURRENT.id).map(f => getDog(f.dogId)).filter(Boolean);
+  const reports = getReports().filter(r => r.userId === CURRENT.id);
+  const vols = getVols().filter(v => v.userId === CURRENT.id);
+  const donos = getDonos().filter(d => d.userId === CURRENT.id);
+
+  const tabs = [
+    ['apps', '📋 Applications (' + apps.length + ')'],
+    ['favs', '❤️ Favourites (' + favs.length + ')'],
+    ['reports', '🚨 My Reports (' + reports.length + ')'],
+    ['vol', '🙋 Volunteering'],
+    ['donos', '💛 Donations (' + donos.length + ')'],
+    ['profile', '⚙️ Profile']
+  ];
+
+  let body = '';
+  if (dashTab === 'apps') {
+    body = apps.length ? `
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Dog</th><th>Breed</th><th>Applied</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>${apps.map(a => {
+          const d = getDog(a.dogId) || { name: 'Removed', breed: '—' };
+          return `<tr>
+            <td><a href="#/dog/${a.dogId}" style="color:var(--brand);font-weight:600">${esc(d.name)}</a></td>
+            <td>${esc(d.breed)}</td>
+            <td>${fmtDate(a.createdAt)}</td>
+            <td><span class="tag ${a.status}">${a.status}</span></td>
+            <td>${a.status === 'pending'
+              ? `<button class="btn sm ghost" data-act="cancelApp" data-id="${a.id}">Cancel</button>`
+              : '<span class="muted small">—</span>'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>` : emptyBox('📋', 'No applications yet', 'Browse our dogs and apply to adopt.', '#/adopt', 'Find a Dog');
+  }
+
+  else if (dashTab === 'favs') {
+    body = favs.length ? `<div class="grid g3">${favs.map(dogCard).join('')}</div>`
+      : emptyBox('❤️', 'No favourites yet', 'Tap the heart on any dog to save it here.', '#/adopt', 'Browse Dogs');
+  }
+
+  else if (dashTab === 'reports') {
+    body = reports.length ? `
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Type</th><th>Location</th><th>Urgency</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>${reports.map(r => `<tr>
+          <td>${esc(r.type)}</td><td>${esc(r.location)}</td>
+          <td>${esc(r.urgency)}</td><td>${fmtDate(r.createdAt)}</td>
+          <td><span class="tag ${r.status === 'resolved' ? 'resolved' : 'open'}">${r.status}</span></td>
+        </tr>`).join('')}</tbody>
+      </table></div>` : emptyBox('🚨', 'No reports filed', 'Spotted an injured or abandoned dog? Report it.', '#/report', 'Report a Rescue');
+  }
+
+  else if (dashTab === 'vol') {
+    body = vols.length ? `
+      <div class="panel">
+        <h3 style="margin-bottom:10px">🙋 You are a registered volunteer</h3>
+        <div class="kv">
+          <div><small>City</small><b>${esc(vols[0].city)}</b></div>
+          <div><small>Availability</small><b>${esc(vols[0].availability)}</b></div>
+          <div><small>Skills</small><b>${esc(vols[0].skills)}</b></div>
+          <div><small>Joined</small><b>${fmtDate(vols[0].createdAt)}</b></div>
+        </div>
+        <p class="small muted">Our coordinator will reach out with upcoming rescue drives.</p>
+      </div>` : emptyBox('🙋', 'Not a volunteer yet', 'Join our rescue network and make a difference.', '#/volunteer', 'Volunteer Now');
+  }
+
+  else if (dashTab === 'donos') {
+    body = donos.length ? `
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Amount</th><th>Cause</th><th>Date</th><th>Receipt</th></tr></thead>
+        <tbody>${donos.map(d => `<tr>
+          <td><b>₹${d.amount.toLocaleString('en-IN')}</b></td>
+          <td>${esc(d.cause)}</td><td>${fmtDate(d.createdAt)}</td>
+          <td><button class="btn sm ghost" data-act="printReceipt" data-id="${d.id}">🖨 Receipt</button></td>
+        </tr>`).join('')}</tbody>
+        <tfoot><tr><th>Total</th><th colspan="3">₹${donos.reduce((s, d) => s + d.amount, 0).toLocaleString('en-IN')}</th></tr></tfoot>
+      </table></div>` : emptyBox('💛', 'No donations yet', 'Every ₹500 feeds a rescue dog for a week.', '#/donate', 'Donate Now');
+  }
+
+  else {
+    body = `
+      <div class="panel" style="max-width:640px">
+        <h3 style="margin-bottom:16px">My Profile</h3>
+        <div class="kv">
+          <div><small>Name</small><b>${esc(CURRENT.name)}</b></div>
+          <div><small>Email</small><b>${esc(CURRENT.email)}</b></div>
+          <div><small>Phone</small><b>${esc(CURRENT.phone || '—')}</b></div>
+          <div><small>City</small><b>${esc(CURRENT.city || '—')}</b></div>
+          <div><small>Role</small><b>${esc(CURRENT.role)}</b></div>
+          <div><small>Member since</small><b>${fmtDate(CURRENT.createdAt)}</b></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn primary sm" data-act="openProfile">Edit Profile</button>
+          <button class="btn ghost sm" data-act="openChangePw">Change Password</button>
+          <button class="btn ghost sm" data-act="logout">Logout</button>
+        </div>
+      </div>`;
+  }
+
+  return `
+  <section class="block" style="padding-top:36px">
+    <div class="wrap">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap">
+        <span class="avatar" style="width:58px;height:58px;font-size:1.5rem">${esc(CURRENT.name.charAt(0).toUpperCase())}</span>
+        <div>
+          <h1 style="font-size:1.7rem;margin:0">Hi, ${esc(CURRENT.name.split(' ')[0])} 👋</h1>
+          <p class="muted small">${esc(CURRENT.email)}${CURRENT.role === 'admin' ? ' · <b style="color:var(--brand)">Administrator</b>' : ''}</p>
+        </div>
+      </div>
+      <div class="tabs">
+        ${tabs.map(([k, label]) => `<button class="${dashTab === k ? 'active' : ''}" data-act="dashTab" data-tab="${k}">${label}</button>`).join('')}
+      </div>
+      ${body}
+    </div>
+  </section>`;
+}
+
+function emptyBox(em, title, sub, href, btn) {
+  return `<div class="empty"><span class="em">${em}</span>
+    <h3 style="margin-bottom:6px">${title}</h3>
+    <p class="muted" style="margin-bottom:18px">${sub}</p>
+    <a class="btn primary" href="${href}">${btn}</a></div>`;
+}
+
+/* =========================================================
+   VIEW: ADMIN
+   ========================================================= */
+function viewAdmin() {
+  if (!CURRENT || CURRENT.role !== 'admin') {
+    return `<div class="wrap empty"><span class="em">⛔</span>
+      <h2>Admin access required</h2>
+      <p class="muted" style="margin:8px 0 18px">Login with the admin account to manage the platform.</p>
+      <button class="btn primary" data-act="openAuth" data-mode="login">Login as Admin</button>
+      <p class="small muted" style="margin-top:14px">Demo → admin@caninehelp.org / admin123</p></div>`;
+  }
+
+  const dogs = getDogs(), apps = getApps(), reports = getReports(), users = getUsers();
+  const tabs = [
+    ['dogs', '🐕 Dogs (' + dogs.length + ')'],
+    ['apps', '📋 Applications (' + apps.length + ')'],
+    ['reports', '🚨 Reports (' + reports.length + ')'],
+    ['users', '👥 Users (' + users.length + ')']
+  ];
+
+  let body = '';
+
+  if (adminTab === 'dogs') {
+    const q = adminSearch.dogs.trim().toLowerCase();
+    const filtered = q ? dogs.filter(d => (d.name + ' ' + d.breed + ' ' + d.city).toLowerCase().includes(q)) : dogs;
+    body = `
+      <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+        <input placeholder="Search dogs…" value="${esc(adminSearch.dogs)}" id="searchDogs" style="max-width:280px">
+        <button class="btn primary sm" data-act="addDog">+ Add New Dog</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Name</th><th>Breed</th><th>City</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${filtered.map(d => `<tr>
+          <td><b>${esc(d.name)}</b></td>
+          <td>${esc(d.breed)}</td>
+          <td>${esc(d.city)}</td>
+          <td><span class="badge ${d.status}" style="position:static">${d.status}</span></td>
+          <td>
+            <button class="btn sm ghost" data-act="editDog" data-id="${d.id}">Edit</button>
+            <button class="btn sm danger" data-act="delDog" data-id="${d.id}">Delete</button>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+  }
+
+  else if (adminTab === 'apps') {
+    body = apps.length ? `
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Applicant</th><th>Dog</th><th>City</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${apps.map(a => {
+          const d = getDog(a.dogId) || { name: 'Removed' };
+          const u = users.find(x => x.id === a.userId) || { name: 'Unknown', email: '' };
+          return `<tr>
+            <td>${esc(a.name)}<br><small class="muted">${esc(u.email || '')}</small></td>
+            <td>${esc(d.name)}</td>
+            <td>${esc(a.city)}</td>
+            <td>${fmtDate(a.createdAt)}</td>
+            <td><span class="tag ${a.status}">${a.status}</span></td>
+            <td>
+              ${a.status === 'pending' ? `
+                <button class="btn sm ok" data-act="appStatus" data-id="${a.id}" data-status="approved">Approve</button>
+                <button class="btn sm danger" data-act="appStatus" data-id="${a.id}" data-status="rejected">Reject</button>
+              ` : '<span class="muted small">—</span>'}
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>` : `<div class="empty"><span class="em">📋</span>No applications yet.</div>`;
+  }
+
+  else if (adminTab === 'reports') {
+    body = reports.length ? `
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Type</th><th>Location</th><th>Urgency</th><th>Description</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>${reports.map(r => `<tr>
+          <td>${esc(r.type)}</td>
+          <td>${esc(r.location)}</td>
+          <td>${esc(r.urgency)}</td>
+          <td style="white-space:normal;max-width:280px">${esc(r.description)}</td>
+          <td><span class="tag ${r.status === 'resolved' ? 'resolved' : 'open'}">${r.status}</span></td>
+          <td>${r.status !== 'resolved'
+            ? `<button class="btn sm ok" data-act="resolveReport" data-id="${r.id}">Resolve</button>`
+            : '<span class="muted small">Done</span>'}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>` : `<div class="empty"><span class="em">🚨</span>No rescue reports yet.</div>`;
+  }
+
+  else {
+    const q = adminSearch.users.trim().toLowerCase();
+    const filtered = q ? users.filter(u => (u.name + ' ' + u.email).toLowerCase().includes(q)) : users;
+    body = `
+      <div style="margin-bottom:16px">
+        <input placeholder="Search users…" value="${esc(adminSearch.users)}" id="searchUsers" style="max-width:280px">
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Role</th><th>Joined</th></tr></thead>
+        <tbody>${filtered.map(u => `<tr>
+          <td><b>${esc(u.name)}</b></td>
+          <td>${esc(u.email)}</td>
+          <td>${esc(u.phone || '—')}</td>
+          <td>${esc(u.city || '—')}</td>
+          <td><span class="chip ${u.role === 'admin' ? 'warn' : ''}">${esc(u.role)}</span></td>
+          <td>${fmtDate(u.createdAt)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+  }
+
+  return `
+  <section class="block" style="padding-top:36px">
+    <div class="wrap">
+      <h1 style="font-size:1.8rem;margin-bottom:6px">🛠 Admin Panel</h1>
+      <p class="muted" style="margin-bottom:26px">Manage dogs, applications, rescue reports and users.</p>
+      <div class="tabs">
+        ${tabs.map(([k, l]) => `<button class="${adminTab === k ? 'active' : ''}" data-act="adminTab" data-tab="${k}">${l}</button>`).join('')}
+      </div>
+      ${body}
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   DOG EDIT MODAL (admin)
+   ========================================================= */
+function openDogForm(id) {
+  const d = id ? getDog(id) : null;
+  const v = d || { name:'', breed:'', age:1, ageUnit:'years', gender:'Male', size:'Medium',
+                   city:'', state:'', status:'available', vaccinated:true, sterilized:false,
+                   goodWithKids:true, goodWithPets:true, desc:'', emoji:'🐕' };
+  openModal(`
+    <div class="modal-head">
+      <h2>${d ? 'Edit' : 'Add'} Dog</h2>
+      <button class="icon-btn close" data-act="closeModal">✕</button>
+    </div>
+    <form class="form grid2" data-form="dog" data-id="${d ? d.id : ''}">
+      <label>Name<input name="name" required value="${esc(v.name)}"></label>
+      <label>Breed<input name="breed" required value="${esc(v.breed)}"></label>
+      <label>Age<input name="age" type="number" min="0" step="1" required value="${v.age}"></label>
+      <label>Age Unit
+        <select name="ageUnit">
+          <option ${v.ageUnit === 'months' ? 'selected' : ''}>months</option>
+          <option ${v.ageUnit === 'years' ? 'selected' : ''}>years</option>
+        </select>
+      </label>
+      <label>Gender<select name="gender">
+        <option ${v.gender === 'Male' ? 'selected' : ''}>Male</option>
+        <option ${v.gender === 'Female' ? 'selected' : ''}>Female</option>
+      </select></label>
+      <label>Size<select name="size">
+        ${['Small','Medium','Large'].map(s => `<option ${v.size === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select></label>
+      <label>City<input name="city" required value="${esc(v.city)}"></label>
+      <label>State<input name="state" required value="${esc(v.state)}"></label>
+      <label>Status<select name="status">
+        ${['available','pending','adopted'].map(s => `<option ${v.status === s ? 'selected' : ''}>${s}</option>`).join('')}
+      </select></label>
+      <label>Emoji<input name="emoji" maxlength="4" value="${esc(v.emoji)}"></label>
+      <label class="full">Description<textarea name="desc" rows="3" required>${esc(v.desc)}</textarea></label>
+      <label style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" name="vaccinated" style="width:auto" ${v.vaccinated ? 'checked' : ''}> Vaccinated
+      </label>
+      <label style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" name="sterilized" style="width:auto" ${v.sterilized ? 'checked' : ''}> Sterilized
+      </label>
+      <label style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" name="goodWithKids" style="width:auto" ${v.goodWithKids ? 'checked' : ''}> Good with kids
+      </label>
+      <label style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" name="goodWithPets" style="width:auto" ${v.goodWithPets ? 'checked' : ''}> Good with pets
+      </label>
+      <button class="btn primary block full" type="submit">${d ? 'Save Changes' : 'Add Dog'}</button>
+    </form>
+  `);
+}
+
+/* =========================================================
+   VIEW: REPORT RESCUE
+   ========================================================= */
+function viewReport() {
+  const myReports = CURRENT ? getReports().filter(r => r.userId === CURRENT.id) : [];
+  return `
+  <section class="block" style="padding-top:40px">
+    <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start" id="reportWrap">
+      <div class="panel">
+        <h2 style="margin-bottom:6px">🚨 Report a Rescue</h2>
+        <p class="muted small" style="margin-bottom:20px">Spotted an injured, sick or abandoned dog? Tell us where — our nearest volunteer will respond.</p>
+        <form class="form" data-form="report">
+          <label>Type of Emergency
+            <select name="type">
+              <option>Injured / Hit by vehicle</option>
+              <option>Sick / Weak</option>
+              <option>Abandoned puppy</option>
+              <option>Stray in danger</option>
+              <option>Abuse / Cruelty</option>
+              <option>Other</option>
+            </select>
+          </label>
+          <label>Exact Location
+            <input name="location" required placeholder="Area, landmark, city">
+          </label>
+          <label>Urgency
+            <select name="urgency">
+              <option>Critical — immediate</option>
+              <option>High — within hours</option>
+              <option>Medium — today</option>
+              <option>Low — general concern</option>
+            </select>
+          </label>
+          <label>Your Phone
+            <input name="phone" value="${CURRENT ? esc(CURRENT.phone || '') : ''}" placeholder="+91 …">
+          </label>
+          <label>Describe the situation
+            <textarea name="description" rows="4" required placeholder="What happened? Is the dog conscious? Any visible injuries?"></textarea>
+          </label>
+          <button class="btn primary block" type="submit">Submit Report</button>
+        </form>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:20px;background:var(--soft)">
+          <h3 style="margin-bottom:10px">📞 Emergency Helpline</h3>
+          <p style="font-size:1.4rem;font-weight:800;color:var(--brand)">1800-CANINE-HELP</p>
+          <p class="small muted">Available 24×7 across India. For life-threatening cases call immediately.</p>
+        </div>
+        <h3 style="margin-bottom:14px">Your recent reports</h3>
+        ${myReports.length ? myReports.map(r => `
+          <div class="card" style="padding:16px;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+              <b>${esc(r.type)}</b>
+              <span class="tag ${r.status === 'resolved' ? 'resolved' : 'open'}">${r.status}</span>
+            </div>
+            <p class="small muted">📍 ${esc(r.location)} · ${fmtDate(r.createdAt)}</p>
+            <p class="small" style="margin-top:6px">${esc(r.description)}</p>
+          </div>`).join('')
+        : '<p class="muted small">No reports yet. Your submitted reports will appear here.</p>'}
+      </div>
+    </div>
+  </section>
+  <style>@media(max-width:900px){#reportWrap{grid-template-columns:1fr!important}}</style>`;
+}
+
+/* =========================================================
+   VIEW: VOLUNTEER
+   ========================================================= */
+function viewVolunteer() {
+  const already = CURRENT && getVols().some(v => v.userId === CURRENT.id);
+  return `
+  <section class="block" style="padding-top:40px">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Become a Volunteer 🙋</h2>
+        <p>Give a few hours a week — feed, foster, transport or spread awareness. Every hand helps.</p>
+      </div>
+      <div class="grid g2">
+        <div class="panel">
+          ${already ? `
+            <h3 style="margin-bottom:10px">✅ You're already registered!</h3>
+            <p class="muted small">Our coordinator will contact you about upcoming rescue drives.</p>
+            <a class="btn primary sm" href="#/dashboard" style="margin-top:16px">Go to Dashboard</a>
+          ` : `
+            <h3 style="margin-bottom:16px">Volunteer Registration</h3>
+            <form class="form" data-form="volunteer">
+              <label>Full Name<input name="name" required value="${CURRENT ? esc(CURRENT.name) : ''}"></label>
+              <label>Phone<input name="phone" required value="${CURRENT ? esc(CURRENT.phone || '') : ''}"></label>
+              <label>City<input name="city" required value="${CURRENT ? esc(CURRENT.city || '') : ''}"></label>
+              <label>Skills / Interest
+                <select name="skills">
+                  <option>Rescue &amp; Transport</option>
+                  <option>Fostering</option>
+                  <option>Feeding Street Dogs</option>
+                  <option>Veterinary Help</option>
+                  <option>Social Media &amp; Awareness</option>
+                  <option>Fundraising</option>
+                </select>
+              </label>
+              <label>Availability
+                <select name="availability">
+                  <option>Weekends only</option>
+                  <option>Weekday evenings</option>
+                  <option>Flexible / On-call</option>
+                  <option>Full time</option>
+                </select>
+              </label>
+              <button class="btn primary block" type="submit">Join the Network</button>
+            </form>`}
+        </div>
+        <div>
+          <div class="grid" style="gap:14px">
+            <div class="step"><div class="ico">🚑</div><h4>Rescue Support</h4><p>Accompany rescue missions, help transport injured dogs to partner vets.</p></div>
+            <div class="step"><div class="ico">🏠</div><h4>Foster a Dog</h4><p>Temporarily home a dog until we find a permanent family. We cover food &amp; medicals.</p></div>
+            <div class="step"><div class="ico">🍚</div><h4>Feeding Drives</h4><p>Join our weekend feeding rounds — 1,200+ street dogs fed every week.</p></div>
+            <div class="step"><div class="ico">📣</div><h4>Awareness</h4><p>Help run adoption camps, vaccination drives and school awareness sessions.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   VIEW: DONATE
+   ========================================================= */
+function viewDonate() {
+  return `
+  <section class="block" style="padding-top:40px">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Support our rescues 💛</h2>
+        <p>100% of donations go directly to food, medicine, sterilisation and shelter.</p>
+      </div>
+      <div class="grid g2">
+        <div class="panel">
+          <h3 style="margin-bottom:16px">Make a Donation</h3>
+          <form class="form" data-form="donate">
+            <label>Choose Amount (₹)
+              <select name="amount">
+                <option value="500">₹500 — feeds a dog for a week</option>
+                <option value="1500">₹1,500 — full vaccination course</option>
+                <option value="3000">₹3,000 — sterilisation + recovery</option>
+                <option value="5000">₹5,000 — emergency rescue kit</option>
+                <option value="10000">₹10,000 — one month shelter sponsorship</option>
+              </select>
+            </label>
+            <label>Cause
+              <select name="cause">
+                <option>General Fund</option>
+                <option>Medical &amp; Surgery</option>
+                <option>Food &amp; Nutrition</option>
+                <option>Shelter &amp; Maintenance</option>
+                <option>Sterilisation (ABC)</option>
+              </select>
+            </label>
+            <label>Your Name<input name="name" required value="${CURRENT ? esc(CURRENT.name) : ''}"></label>
+            <label>Email<input type="email" name="email" required value="${CURRENT ? esc(CURRENT.email) : ''}"></label>
+            <button class="btn primary block" type="submit">💛 Donate Now</button>
+            <p class="small muted center">🔒 Demo mode — no real payment is processed. All donations are recorded in your dashboard.</p>
+          </form>
+        </div>
+        <div class="grid" style="gap:14px;align-content:start">
+          <div class="step"><div class="ico">🍚</div><h4>₹500</h4><p>Feeds one rescued dog for a full week — rice, chicken, supplements.</p></div>
+          <div class="step"><div class="ico">💉</div><h4>₹1,500</h4><p>Covers a complete vaccination course including anti-rabies.</p></div>
+          <div class="step"><div class="ico">🏥</div><h4>₹3,000</h4><p>Sterilisation surgery and 10 days of post-op recovery care.</p></div>
+          <div class="step"><div class="ico">🏡</div><h4>₹10,000</h4><p>Sponsors one dog's entire stay at our shelter for a month.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   VIEW: LOST & FOUND
+   ========================================================= */
+function viewLostFound() {
+  const items = getLost().slice().sort((a, b) => b.createdAt - a.createdAt);
+  return `
+  <section class="block" style="padding-top:40px">
+    <div class="wrap">
+      <div class="sec-head"><h2>Lost &amp; Found 🐾</h2>
+        <p>Reuniting lost pets with their families. Post a listing or help spot a match.</p></div>
+      <div class="grid g2">
+        <div class="panel">
+          <h3 style="margin-bottom:16px">Post a Listing</h3>
+          <form class="form grid2" data-form="lost">
+            <label>Type<select name="type"><option>Lost Pet</option><option>Found Pet</option></select></label>
+            <label>Pet Name<input name="petName" placeholder="Bruno / Unknown"></label>
+            <label>Breed<input name="breed" required placeholder="Labrador / Indie"></label>
+            <label>City<input name="city" required value="${CURRENT ? esc(CURRENT.city || '') : ''}"></label>
+            <label class="full">Last Seen Location / Details
+              <textarea name="details" rows="3" required placeholder="Where and when? Collar colour, markings, contact number…"></textarea></label>
+            <button class="btn primary block full" type="submit">Post Listing</button>
+          </form>
+        </div>
+        <div>
+          <h3 style="margin-bottom:14px">Recent Listings (${items.length})</h3>
+          ${items.length ? items.map(i => `
+            <div class="card" style="padding:16px;margin-bottom:12px">
+              <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+                <b>${esc(i.type)} · ${esc(i.petName || 'Unnamed')}</b>
+                <span class="chip ${i.type === 'Lost Pet' ? 'bad' : 'ok'}">${esc(i.type)}</span>
+              </div>
+              <p class="small muted">${esc(i.breed)} · 📍 ${esc(i.city)} · ${fmtDate(i.createdAt)}</p>
+              <p class="small" style="margin-top:6px">${esc(i.details)}</p>
+              ${CURRENT && (i.userId === CURRENT.id || CURRENT.role === 'admin') ? `
+                <button class="btn sm ghost" data-act="delLost" data-id="${i.id}" style="margin-top:10px">Delete</button>
+              ` : ''}
+            </div>`).join('')
+          : '<p class="muted small">No listings yet. Be the first to post.</p>'}
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   VIEW: ABOUT
+   ========================================================= */
+function viewAbout() {
+  return `
+  <section class="block" style="padding-top:40px">
+    <div class="wrap" style="max-width:900px">
+      <div class="sec-head"><h2>About The Canine Help</h2>
+        <p>A volunteer-run, not-for-profit rescue network for street and abandoned dogs in India.</p></div>
+      <div class="panel" style="margin-bottom:24px">
+        <h3 style="margin-bottom:12px">Our Mission 🐾</h3>
+        <p class="muted" style="margin-bottom:14px">We rescue injured and abandoned dogs from the streets, provide
+          veterinary care and rehabilitation, and place them with screened, loving families. We also run
+          sterilisation and anti-rabies drives to humanely control the street dog population.</p>
+        <p class="muted">Founded in 2018 by a group of animal lovers in Mumbai, today we operate across 12 cities
+          with 300+ active volunteers and 40+ foster homes.</p>
+      </div>
+      <div class="grid g3" style="margin-bottom:24px">
+        <div class="step"><div class="ico">🚑</div><h4>Rescue</h4><p>24×7 helpline and rapid response teams for injured street dogs.</p></div>
+        <div class="step"><div class="ico">🏥</div><h4>Rehabilitate</h4><p>Partner veterinary clinics, surgery, physiotherapy and recovery care.</p></div>
+        <div class="step"><div class="ico">🏡</div><h4>Rehome</h4><p>Careful screening, home visits and post-adoption follow-ups.</p></div>
+      </div>
+      <div class="panel">
+        <h3 style="margin-bottom:14px">Contact Us</h3>
+        <div class="kv">
+          <div><small>Helpline</small><b>1800-CANINE-HELP</b></div>
+          <div><small>Email</small><b>hello@caninehelp.org</b></div>
+          <div><small>Address</small><b>Andheri West, Mumbai 400053</b></div>
+          <div><small>Hours</small><b>24×7 Rescue · Office 9am–7pm</b></div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* =========================================================
+   PRINT RECEIPT
+   ========================================================= */
+function printReceipt(id) {
+  const d = getDonos().find(x => x.id === id);
+  if (!d) return;
+  const html = `
+    <html><head><title>Receipt ${esc(d.id)}</title>
+    <style>body{font-family:system-ui,sans-serif;padding:40px;max-width:560px;margin:0 auto;color:#111}
+    h1{font-size:1.3rem;margin-bottom:4px} .muted{color:#666;font-size:.85rem}
+    .row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee}
+    .total{font-size:1.4rem;font-weight:800;color:#ef6c2e;text-align:right;margin-top:20px}
+    .stamp{display:inline-block;padding:4px 10px;background:#dcfce7;color:#166534;border-radius:6px;font-size:.75rem;font-weight:700}</style>
+    </head><body>
+    <h1>🐾 The Canine Help</h1>
+    <p class="muted">Animal Rescue &amp; Adoption · 1800-CANINE-HELP · hello@caninehelp.org</p>
+    <hr style="margin:20px 0;border:0;border-top:2px solid #ef6c2e">
+    <h2 style="font-size:1rem">Donation Receipt</h2>
+    <p class="muted">Receipt #${esc(d.id.toUpperCase())} · ${fmtDateTime(d.createdAt)}</p>
+    <div class="row"><span>Donor</span><b>${esc(d.name)}</b></div>
+    <div class="row"><span>Email</span><b>${esc(d.email)}</b></div>
+    <div class="row"><span>Cause</span><b>${esc(d.cause)}</b></div>
+    <div class="row"><span>Date</span><b>${fmtDate(d.createdAt)}</b></div>
+    <div class="total">₹${d.amount.toLocaleString('en-IN')}</div>
+    <p class="muted" style="margin-top:20px"><span class="stamp">✓ PAID</span></p>
+    <p class="muted" style="margin-top:30px;font-size:.75rem">Thank you for supporting our rescue missions. This is a demo receipt — no real payment was processed.</p>
+    </body></html>`;
+  const w = window.open('', '_blank', 'width=600,height=700');
+  if (w) { w.document.write(html); w.document.close(); setTimeout(() => w.print(), 300); }
+}
+
+/* =========================================================
+   FORM HANDLERS
+   ========================================================= */
+document.addEventListener('submit', async e => {
+  const form = e.target.closest('[data-form]');
+  if (!form) return;
+  e.preventDefault();
+  const type = form.dataset.form;
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+
+  try {
+    if (type === 'login') {
+      await doLogin(data.email, data.password, data.remember);
+    }
+    else if (type === 'signup') {
+      await doSignup(data);
+    }
+    else if (type === 'forgot') {
+      const email = data.email.trim().toLowerCase();
+      const user = getUsers().find(u => u.email.toLowerCase() === email);
+      if (!user) return toast('No account found with this email', 'err');
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      openResetForm(email, code);
+      toast('Reset code generated (shown above)', 'ok');
+    }
+    else if (type === 'reset') {
+      if (data.code !== form.dataset.code) return toast('Invalid reset code', 'err');
+      if (data.password.length < 6) return toast('Password must be at least 6 characters', 'err');
+      const email = form.dataset.email;
+      const user = getUsers().find(u => u.email.toLowerCase() === email);
+      if (!user) return toast('User not found', 'err');
+      user.salt = uid('s');
+      user.hash = await hashPw(data.password, user.salt);
+      await DB.put('users', user);
+      await refreshStore('users');
+      closeModal();
+      toast('Password reset successfully. Please login.', 'ok');
+      openAuth('login');
+    }
+    else if (type === 'apply') {
+      if (!CURRENT) return openAuth('login');
+      const dogId = form.dataset.id;
+      const apps = getApps();
+      if (apps.some(a => a.userId === CURRENT.id && a.dogId === dogId))
+        return toast('Already applied for this dog', 'err');
+      const app = {
+        id: uid('a_'), userId: CURRENT.id, dogId,
+        name: data.name, phone: data.phone, city: data.city,
+        home: data.home, yard: data.yard, pets: data.pets,
+        reason: data.reason, status: 'pending', createdAt: now()
+      };
+      await DB.put('applications', app);
+      await refreshStore('applications');
+      closeModal();
+      toast('Application submitted! We will contact you within 48 hours. 🐾', 'ok');
+      render();
+    }
+    else if (type === 'report') {
+      if (!requireLogin('file a rescue report')) return;
+      const report = {
+        id: uid('r_'), userId: CURRENT.id, type: data.type, location: data.location,
+        urgency: data.urgency, phone: data.phone, description: data.description,
+        status: 'open', createdAt: now()
+      };
+      await DB.put('reports', report);
+      await refreshStore('reports');
+      toast('Report filed! Our nearest volunteer has been alerted. 🚨', 'ok');
+      form.reset();
+      render();
+    }
+    else if (type === 'volunteer') {
+      if (!requireLogin('register as a volunteer')) return;
+      if (getVols().some(v => v.userId === CURRENT.id)) return toast('You are already registered', 'err');
+      const vol = {
+        id: uid('v_'), userId: CURRENT.id, name: data.name, phone: data.phone,
+        city: data.city, skills: data.skills, availability: data.availability, createdAt: now()
+      };
+      await DB.put('volunteers', vol);
+      await refreshStore('volunteers');
+      toast('Welcome to the volunteer network! 🎉', 'ok');
+      render();
+    }
+    else if (type === 'donate') {
+      if (!requireLogin('make a donation')) return;
+      const amount = parseInt(data.amount, 10);
+      const dono = {
+        id: uid('dn_'), userId: CURRENT.id, amount,
+        cause: data.cause, name: data.name, email: data.email, createdAt: now()
+      };
+      await DB.put('donations', dono);
+      await refreshStore('donations');
+      toast('Thank you! ₹' + amount.toLocaleString('en-IN') + ' donated 💛', 'ok');
+      render();
+    }
+    else if (type === 'lost') {
+      if (!requireLogin('post a listing')) return;
+      const item = {
+        id: uid('lf_'), userId: CURRENT.id, type: data.type, petName: data.petName,
+        breed: data.breed, city: data.city, details: data.details, createdAt: now()
+      };
+      await DB.put('lostfound', item);
+      await refreshStore('lostfound');
+      toast('Listing posted successfully', 'ok');
+      render();
+    }
+    else if (type === 'dog') {
+      if (!CURRENT || CURRENT.role !== 'admin') return;
+      const id = form.dataset.id;
+      const payload = {
+        name: data.name, breed: data.breed, age: parseInt(data.age, 10), ageUnit: data.ageUnit,
+        gender: data.gender, size: data.size, city: data.city, state: data.state,
+        status: data.status, emoji: data.emoji || '🐕', desc: data.desc,
+        vaccinated: !!data.vaccinated, sterilized: !!data.sterilized,
+        goodWithKids: !!data.goodWithKids, goodWithPets: !!data.goodWithPets
+      };
+      if (id) {
+        const existing = getDog(id);
+        const updated = { ...existing, ...payload };
+        await DB.put('dogs', updated);
+        toast('Dog updated', 'ok');
+      } else {
+        const dog = { id: uid('d_'), ...payload, hue: Math.floor(Math.random() * 360), postedAt: now() };
+        await DB.put('dogs', dog);
+        toast('Dog added to the platform', 'ok');
+      }
+      await refreshStore('dogs');
+      closeModal();
+      render();
+    }
+    else if (type === 'profile') {
+      if (!CURRENT) return;
+      const email = data.email.trim().toLowerCase();
+      if (getUsers().some(u => u.email.toLowerCase() === email && u.id !== CURRENT.id))
+        return toast('Email already in use', 'err');
+      const updated = { ...CURRENT, name: data.name.trim(), email, phone: data.phone.trim(), city: data.city.trim() };
+      await DB.put('users', updated);
+      await refreshStore('users');
+      CURRENT = updated;
+      closeModal();
+      renderAuthArea();
+      render();
+      toast('Profile updated', 'ok');
+    }
+    else if (type === 'changePw') {
+      if (!CURRENT) return;
+      const h = await hashPw(data.current, CURRENT.salt);
+      if (h !== CURRENT.hash) return toast('Current password is incorrect', 'err');
+      if (data.password !== data.confirm) return toast('New passwords do not match', 'err');
+      if (data.password.length < 6) return toast('New password must be 6+ characters', 'err');
+      CURRENT.salt = uid('s');
+      CURRENT.hash = await hashPw(data.password, CURRENT.salt);
+      await DB.put('users', CURRENT);
+      await refreshStore('users');
+      closeModal();
+      toast('Password changed successfully', 'ok');
+    }
+  } catch (err) {
+    console.error(err);
+    toast('Something went wrong. Please try again.', 'err');
+  }
+});
+
+/* =========================================================
+   CLICK HANDLERS
+   ========================================================= */
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const act = el.dataset.act;
+
+  if (act === 'bgClose' && e.target === el) return closeModal();
+  if (act === 'closeModal') return closeModal();
+
+  if (act === 'openAuth') { e.preventDefault(); return openAuth(el.dataset.mode || 'login'); }
+  if (act === 'switchAuth') { e.preventDefault(); return openAuth(el.dataset.mode); }
+  if (act === 'forgotPwd') { e.preventDefault(); return openForgotPw(); }
+  if (act === 'logout') { e.preventDefault(); return await logout(); }
+  if (act === 'openProfile') { e.preventDefault(); closeModal(); return setTimeout(openProfile, 100); }
+  if (act === 'openChangePw') { e.preventDefault(); closeModal(); return setTimeout(openChangePw, 100); }
+
+  if (act === 'togglePwd') {
+    e.preventDefault();
+    const input = el.parentElement.querySelector('input');
+    if (!input) return;
+    if (input.type === 'password') { input.type = 'text'; el.textContent = '🙈'; }
+    else { input.type = 'password'; el.textContent = '👁️'; }
+    return;
+  }
+
+  if (act === 'toggleDrop') {
+    e.preventDefault();
+    const dd = $('#userDrop');
+    if (dd) dd.classList.toggle('open');
+    return;
+  }
+
+  if (act === 'fav') {
+    e.preventDefault();
+    if (!requireLogin('save favourites')) return;
+    const dogId = el.dataset.id;
+    const favs = getFavs();
+    const idx = favs.findIndex(f => f.userId === CURRENT.id && f.dogId === dogId);
+    if (idx >= 0) {
+      await DB.del('favorites', favs[idx].id || (favs[idx].userId + '_' + favs[idx].dogId));
+      // also try by composite if id missing
+      await refreshStore('favorites');
+      el.textContent = '🤍';
+      el.classList.remove('on');
+      toast('Removed from favourites');
+    } else {
+      const fav = { id: uid('f_'), userId: CURRENT.id, dogId, createdAt: now() };
+      await DB.put('favorites', fav);
+      await refreshStore('favorites');
+      el.textContent = '❤️';
+      el.classList.add('on');
+      toast('Saved to favourites ❤️', 'ok');
+    }
+    return;
+  }
+
+  if (act === 'shareDog') {
+    e.preventDefault();
+    const d = getDog(el.dataset.id);
+    if (!d) return;
+    const url = location.origin + location.pathname + '#/dog/' + d.id;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Meet ' + d.name + ' — The Canine Help', text: 'Adopt ' + d.name + ' (' + d.breed + ')', url }); }
+      catch (err) {}
+    } else {
+      try { await navigator.clipboard.writeText(url); toast('Link copied!', 'ok'); }
+      catch (err) { toast('Link: ' + url, 'info'); }
+    }
+    return;
+  }
+
+  if (act === 'apply') { e.preventDefault(); return openApply(el.dataset.id); }
+
+  if (act === 'dashTab') { dashTab = el.dataset.tab; return render(); }
+  if (act === 'adminTab') { adminTab = el.dataset.tab; return render(); }
+
+  if (act === 'addDog') { e.preventDefault(); return openDogForm(null); }
+  if (act === 'editDog') { e.preventDefault(); return openDogForm(el.dataset.id); }
+
+  if (act === 'delDog') {
+    e.preventDefault();
+    const d = getDog(el.dataset.id);
+    if (!d) return;
+    return confirmDialog('Delete Dog?', 'This will permanently remove ' + d.name + ' from the platform.', async () => {
+      await DB.del('dogs', d.id);
+      await refreshStore('dogs');
+      toast('Dog removed', 'info');
+      render();
+    }, 'Delete');
+  }
+
+  if (act === 'appStatus') {
+    e.preventDefault();
+    const apps = getApps();
+    const a = apps.find(x => x.id === el.dataset.id);
+    if (!a) return;
+    a.status = el.dataset.status;
+    await DB.put('applications', a);
+    if (a.status === 'approved') {
+      const d = getDog(a.dogId);
+      if (d) { d.status = 'adopted'; await DB.put('dogs', d); }
+    }
+    await refreshStore('applications');
+    await refreshStore('dogs');
+    toast('Application ' + a.status, 'ok');
+    return render();
+  }
+
+  if (act === 'resolveReport') {
+    e.preventDefault();
+    const r = getReports().find(x => x.id === el.dataset.id);
+    if (!r) return;
+    r.status = 'resolved';
+    await DB.put('reports', r);
+    await refreshStore('reports');
+    toast('Report resolved ✅', 'ok');
+    return render();
+  }
+
+  if (act === 'cancelApp') {
+    e.preventDefault();
+    return confirmDialog('Cancel Application?', 'You can reapply later if the dog is still available.', async () => {
+      await DB.del('applications', el.dataset.id);
+      await refreshStore('applications');
+      toast('Application cancelled', 'info');
+      render();
+    }, 'Cancel Application');
+  }
+
+  if (act === 'delLost') {
+    e.preventDefault();
+    return confirmDialog('Delete Listing?', 'This listing will be removed permanently.', async () => {
+      await DB.del('lostfound', el.dataset.id);
+      await refreshStore('lostfound');
+      toast('Listing deleted', 'info');
+      render();
+    }, 'Delete');
+  }
+
+  if (act === 'printReceipt') {
+    e.preventDefault();
+    return printReceipt(el.dataset.id);
+  }
+});
+
+/* live search in admin */
+document.addEventListener('input', e => {
+  if (e.target.id === 'searchDogs') { adminSearch.dogs = e.target.value; render(); setTimeout(() => { const i = $('#searchDogs'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 0); }
+  if (e.target.id === 'searchUsers') { adminSearch.users = e.target.value; render(); setTimeout(() => { const i = $('#searchUsers'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 0); }
+});
+
+/* filters live update */
+document.addEventListener('input', e => {
+  if (['fq','fbreed','fsize','fgender','fcity','fsort'].includes(e.target.id)) applyFilters();
+});
+document.addEventListener('change', e => {
+  if (['fq','fbreed','fsize','fgender','fcity','fsort'].includes(e.target.id)) applyFilters();
+});
+
+/* password strength */
+document.addEventListener('input', e => {
+  if (e.target.matches('[data-strength]')) {
+    const meter = $('#strengthMeter');
+    if (!meter) return;
+    const s = passwordStrength(e.target.value);
+    meter.className = 'strength s' + s;
+  }
+});
+
+/* close dropdown on outside click */
+document.addEventListener('click', e => {
+  if (!e.target.closest('#authArea')) {
+    const dd = $('#userDrop');
+    if (dd) dd.classList.remove('open');
+  }
+  if (!e.target.closest('#navLinks') && !e.target.closest('#menuBtn')) {
+    const nav = $('#navLinks');
+    if (nav) nav.classList.remove('open');
+  }
+});
+
+/* esc key closes modal */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); }
+});
+
+/* =========================================================
+   THEME / NAV / SCROLL
+   ========================================================= */
+function setTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('tch_theme', t); } catch (e) {}
+  const btn = $('#themeBtn');
+  if (btn) btn.textContent = t === 'dark' ? '☀️' : '🌙';
+}
+$('#themeBtn').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  setTheme(cur);
+});
+$('#menuBtn').addEventListener('click', () => $('#navLinks').classList.toggle('open'));
+
+/* scroll progress & back-to-top */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+  const bar = $('#progress');
+  if (bar) bar.style.width = Math.min(scrolled, 100) + '%';
+  const bt = $('#backTop');
+  if (bt) bt.classList.toggle('show', h.scrollTop > 400);
+}, { passive: true });
+
+$('#backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* =========================================================
+   INIT
+   ========================================================= */
+async function init() {
+  try {
+    // seed users
+    let users = await DB.getAll('users');
+    if (users.length === 0) {
+      const salt = uid('s');
+      const admin = {
+        id: 'u_admin', name: 'Shelter Admin', email: 'admin@caninehelp.org',
+        phone: '+91 90000 00000', city: 'Mumbai', role: 'admin',
+        salt, hash: await hashPw('admin123', salt), createdAt: now()
+      };
+      await DB.put('users', admin);
+    }
+
+    // seed dogs
+    let dogs = await DB.getAll('dogs');
+    if (dogs.length === 0) {
+      for (const d of SEED_DOGS) await DB.put('dogs', d);
+    }
+
+    // load cache
+    await loadAllCache();
+
+    // theme
+    let theme = 'light';
+    try { theme = localStorage.getItem('tch_theme') || 'light'; } catch (e) {}
+    setTheme(theme);
+
+    // session
+    CURRENT = await restoreSession();
+    renderAuthArea();
+
+    // year
+    $('#yr').textContent = new Date().getFullYear();
+
+    // db status
+    $('#dbStatus').textContent = window.indexedDB ? 'IndexedDB' : 'LocalStorage';
+
+    // route
+    if (!location.hash) location.hash = '#/home';
+    render();
+
+    console.log('%c🐾 The Canine Help loaded · DB:', 'color:#ef6c2e;font-weight:bold', window.indexedDB ? 'IndexedDB' : 'LocalStorage');
+  } catch (err) {
+    console.error('Init error:', err);
+    toast('Could not initialize database. Please refresh.', 'err');
+  }
+}
+
+window.addEventListener('hashchange', render);
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
